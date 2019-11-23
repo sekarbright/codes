@@ -114,3 +114,43 @@ export class TestautoComponent implements OnInit {
     </mat-autocomplete>
   </mat-form-field>
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+///// File upload PHP
+
+   header('Access-Control-Allow-Origin: http://localhost:4200');
+      header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+      header('Access-Control-Max-Age: 1000');
+      header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
+      
+      $filepath='raj.txt';
+      if(file_exists($filepath)) {
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="'.basename($filepath).'"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filepath));
+        flush(); // Flush system output buffer
+        readfile($filepath);
+      }
+      
+      //echo '<pre>';
+      //print_r($_FILES);
+      //print_r($_POST);
+      //echo json_encode(array($_FILES,$_POST));
+      echo json_encode(array('success'=>'1'));
+      die;
