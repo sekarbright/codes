@@ -1,0 +1,95 @@
+//Services
+
+
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
+
+
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+import { Hero } from './hero';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TestService {
+
+  constructor(private http: HttpClient) { }
+  configUrl = 'http://localhost/test.php';
+
+	getConfig(){
+	const REQUEST_PARAMS = new HttpParams().set('filename','raj.txt');
+	  return this.http.post(this.configUrl,{id:2},
+	  {
+	  params:REQUEST_PARAMS,
+	  responseType:'arraybuffer'}
+
+	  );
+	}
+
+}
+
+
+
+
+
+
+
+
+
+/// Component
+
+import {Component, OnInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { TestService} from '../test.service';
+import {saveAs} from 'file-saver';
+
+
+@Component({
+  selector: 'app-testauto',
+  templateUrl: './testauto.component.html',
+  styleUrls: ['./testauto.component.css']
+ 
+})
+export class TestautoComponent implements OnInit {
+
+	  myControl = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
+  filteredOptions: Observable<string[]>;
+
+
+  constructor(private service:TestService){}
+
+
+
+
+  ngOnInit() {
+    this.filteredOptions = this.myControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
+
+
+    this.service.getConfig().subscribe((res)=>{
+    	//console.log(res);
+    	saveAs(new Blob([res],{type:'text/plain'}),'raj.txt');
+    });
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.options.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+}
+
+/**  Copyright 2019 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license */
